@@ -1,13 +1,12 @@
+import os
 from flask import Flask, render_template_string
-import requests
-import threading
-import time
 
 app = Flask(__name__)
 
-# --- إعدادات التحكم الكامل (GHOST V13) ---
-TELE_TOKEN = "8737363310:AAGs4VA0PBiwl-MLpv7r6s3RwpmQchhGaLY"
-CHAT_ID = "8329749559"
+# استدعاء المعلومات من "خزنة" Render
+TELE_TOKEN = os.getenv("TELE_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
 
 ASSETS = {
     "GOLD": {"symbol": "PAXGUSDT", "name": "XAU/USD GOLD", "icon": "📀"},
