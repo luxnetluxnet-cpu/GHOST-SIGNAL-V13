@@ -22,36 +22,37 @@ LIVE_FEED = {}
 
 def get_ghost_analysis(symbol):
     try:
-        # فحص السيولة اللحظية
+        # إضافة headers لتجنب حظر السيرفر
+        headers = {'User-Agent': 'Mozilla/5.0'}
         url = f"https://api.binance.com/api/v3/ticker/24hr?symbol={symbol}"
-        data = requests.get(url, timeout=5).json()
+        response = requests.get(url, headers=headers, timeout=10)
+        data = response.json()
+        
         price = float(data['lastPrice'])
         change = float(data['priceChangePercent'])
-        vol = float(data['quoteVolume'])
         
-        # خوارزمية الفرص الحقيقية (Ghost Logic)
+        # باقي الكود كما هو...
         status = "SCANNING"
         power = "50%"
         color = "#444"
         
-        if abs(change) > 2.0:
+        if abs(change) > 0.5: # تقليل الحساسية ليظهر أي تغير
             status = "HYPER SIGNAL 🔥"
             power = "98%"
             color = "#00ffd5" if change > 0 else "#ff0055"
-            
-        tp = price * (1.015 if change > 0 else 0.985)
-        sl = price * (0.994 if change > 0 else 1.006)
-        
+
         return {
             "price": f"{price:,.2f}",
             "change": f"{change:+.2f}%",
             "status": status,
             "power": power,
             "color": color,
-            "tp": f"{tp:.2f}",
-            "sl": f"{sl:.2f}"
+            "tp": f"{price * 1.01:,.2f}",
+            "sl": f"{price * 0.99:,.2f}"
         }
-    except: return None
+    except Exception as e:
+        print(f"Error fetching {symbol}: {e}")
+        return None
 
 def ghost_scanner():
     while True:
